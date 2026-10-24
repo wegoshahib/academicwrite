@@ -32,7 +32,7 @@ def get_secret(name, default=""):
 
 
 MODEL_ID = get_secret("MODEL_ID", "openai/gpt-oss-120b")
-GROQ_API_KEY = get_secret("GROQ_API_KEY", "")
+GROQ_API_KEY = str(get_secret("GROQ_API_KEY", "")).strip().strip("\"'“”‘’").strip()
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 HF_TOKEN = get_secret("HF_TOKEN", "")  # optional, only for saving feedback to a HF dataset
 ADMIN_PASSWORD = get_secret("ADMIN_PASSWORD", "")
@@ -86,6 +86,7 @@ def llm(system_prompt, user_prompt, temperature=0.3, max_tokens=1800):
             "⚠️ The AI service is busy or unavailable right now. "
             "Please wait a moment and try again.\n\n"
             f"(Technical detail: {type(exc).__name__}, status {status})\n\n"
+            f"(Key check: length {len(GROQ_API_KEY)}, starts with '{GROQ_API_KEY[:4]}')\n\n"
             f"{hints.get(status, '')}\n\n"
             f"```\n{detail[:400]}\n```"
         )
